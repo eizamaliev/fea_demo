@@ -16,7 +16,7 @@ endforeach()
 
 option(ENABLE_TESTS "Enables unittesting")
 
-include_directories("${PROJECT_SOURCE_DIR}/../eigen-3.4.0")
+include_directories("${PROJECT_SOURCE_DIR}/../eigen")
 include_directories("${PROJECT_SOURCE_DIR}/core")
 
 add_subdirectory(core)

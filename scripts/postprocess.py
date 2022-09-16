@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
-from PIL import Image, ImageDraw
 import argparse
 import re
 import sys
 import math
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+
 
 class ColorSpace:
     def __init__(self, array):
@@ -17,7 +20,7 @@ class ColorSpace:
         v = (value - self.range[0]) / (self.range[1] - self.range[0])
         color = ((v - 0.5)*4.0, 2.0 - abs(v- 0.5)*4.0,	2.0 - v*4.0)
         color = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
-        return colori
+        return color
 
 class Geometry:
     def __init__(self, gridfile, deformation_file="", stressfile=""):
@@ -155,23 +158,25 @@ class Visualizer:
     def get_lines(self, indexes):
         return [(self.scale*self.nodes[i][0] + 0.05*self.w,  self.h - (self.scale*self.nodes[i][1] + 0.05*self.h)) for i in indexes]
 
-    def save(self):
+    def save(self, output_dir):
+        if not output_dir.exists():
+            output_dir.mkdir(parents=True)
         grid = self.draw_grid()
-        grid.save(f"grid{self.suffix}.jpg")
+        grid.save(str(output_dir / f"grid{self.suffix}.jpg"))
 
         stress_images = self.draw_stresses()
         for name, image in stress_images.items():
             image = self.draw_grid(image)
-            image.save(f"{name}{self.suffix}.jpg")
+            image.save(str(output_dir / f"{name}{self.suffix}.jpg"))
 
 
 def build_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', type=str, help='Path to input file.')
-    parser.add_argument('-r', type=str, help='Path to result file')
-    parser.add_argument('-s', type=str, help='Path to stress file')
-    parser.add_argument('-o', type=str, help='Path to output file.')
+    parser.add_argument('-m', '--mesh', type=Path, help='Path to mesh file.')
+    parser.add_argument('-r', '--result', type=Path, help='Path to result file')
+    parser.add_argument('-s', '--stress', type=Path, help='Path to stress file')
+    parser.add_argument('--output_dir', default=Path('.'), type=Path, help='Path to output directory')
     return parser.parse_args()
 
 
@@ -179,9 +184,9 @@ def build_args():
 if __name__ == '__main__':
     args = build_args()
 
-    geometry = Geometry(args.i, deformation_file=args.r, stressfile=args.s)
+    geometry = Geometry(args.mesh, deformation_file=args.result, stressfile=args.stress)
     visualiser = Visualizer(geometry.nodes, geometry.elements, geometry.stress)
-    visualiser.save()
+    visualiser.save(args.output_dir)
 
     geometry.apply_deformation()
-    Visualizer(geometry.nodes, geometry.elements, geometry.stress, "_deformed").save()
+    Visualizer(geometry.nodes, geometry.elements, geometry.stress, "_deformed").save(args.output_dir)
