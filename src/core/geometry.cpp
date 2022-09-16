@@ -97,9 +97,6 @@ Node& Geometry::getNode(int id)
     throw "No found found";
 }
 
-
-
-
 void Geometry::createBoundaries()
 {
     boundaries.resize(3);
@@ -120,6 +117,10 @@ void Geometry::createBoundaries()
             boundaries[2].nodes.push_back(BoundaryNode(BoundaryNode::F, nodes[i].id));
         }
     }
+
+    auto & force = boundaries[2].nodes;
+    std::sort(force.begin(), force.end(), 
+              [this](BoundaryNode lhs, BoundaryNode rhs) { return this->getNode(lhs.node + this->shift).y < this->getNode(rhs.node + this->shift).y; });
 }
 
 void Geometry::applyNodesShift() 

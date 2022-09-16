@@ -74,15 +74,11 @@ void Solver::applyLoad()
     std::vector<int> indicesToConstraint;
 
     auto boundaries = geometry.getBoundaries();
+
     for (auto boundary : boundaries)
     {
         for (auto it = boundary.nodes.begin(); it!=boundary.nodes.end(); ++it)
         {
-            if (it->type == BoundaryNode::Type::F)
-            {
-                F(2 * it->node + 0) = 1000.0; // Set Fx = 1000
-            }
-
             if (it->type == BoundaryNode::UX)
             {
                 indicesToConstraint.push_back(2 * it->node + 0);
@@ -92,6 +88,16 @@ void Solver::applyLoad()
                 indicesToConstraint.push_back(2 * it->node + 1);
             }
         }
+    }
+
+    std::vector<Node> & nodes = geometry.getNodes();
+    const auto &f_boundary = boundaries[2].nodes;
+    for (int i=0; i<f_boundary.size()-1; ++i)
+    {
+        double l = geometry.getNode(f_boundary[i+1].node + geometry.getShift()).y - geometry.getNode(f_boundary[i].node + geometry.getShift()).y;
+        double f = 1000000.0 * l;
+        F(2 * f_boundary[i].node + 0)   += 0.5 * f;
+        F(2 * f_boundary[i+1].node + 0) += 0.5 * f;
     }
 
 	for (int k = 0; k < globalK.outerSize(); ++k)

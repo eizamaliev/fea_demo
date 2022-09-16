@@ -55,13 +55,13 @@ TEST(Solver, CheckFAfterLoad)
     EXPECT_DOUBLE_EQ(vector(0), 0);
     EXPECT_DOUBLE_EQ(vector(1), 0);
 
-    EXPECT_DOUBLE_EQ(vector(2), 1000.0);
+    EXPECT_DOUBLE_EQ(vector(2), 300.0);
     EXPECT_DOUBLE_EQ(vector(3), 0);
 
     EXPECT_DOUBLE_EQ(vector(4), 0);
     EXPECT_DOUBLE_EQ(vector(5), 0);
 
-    EXPECT_DOUBLE_EQ(vector(6), 1000.0);
+    EXPECT_DOUBLE_EQ(vector(6), 300.0);
     EXPECT_DOUBLE_EQ(vector(7), 0);
 }
 
@@ -99,4 +99,19 @@ TEST(Solver, Solve)
 
     EXPECT_DOUBLE_EQ(result(0), 0.0);
     EXPECT_DOUBLE_EQ(result(4), 0.0);
+}
+
+TEST(SolverCoarse, CheckFAfterLoad)
+{
+    Solver solver("data/mesh_coarse.k");
+
+    solver.applyLoad();
+
+    Eigen::VectorX<double> vector = solver.getLoadVector();
+
+    EXPECT_DOUBLE_EQ(vector(0), 30093.65);
+    EXPECT_DOUBLE_EQ(vector(18), 61547.0);
+    EXPECT_DOUBLE_EQ(vector(20), 63179.849999999995);
+    EXPECT_DOUBLE_EQ(vector(22), 63453.00000000001);
+    EXPECT_DOUBLE_EQ(vector(4), 31726.500000000005);
 }

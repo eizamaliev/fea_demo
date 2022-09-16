@@ -101,13 +101,8 @@ void LinearTriangleElement::updateB()
 
     Eigen::Matrix3d IC = C.inverse();
 
-    for (int i = 0; i < 3; i++)
-    {
-        B(0, 2 * i + 0) = IC(1, i);
-        B(0, 2 * i + 1) = 0.0f;
-        B(1, 2 * i + 0) = 0.0f;
-        B(1, 2 * i + 1) = IC(2, i);
-        B(2, 2 * i + 0) = IC(2, i);
-        B(2, 2 * i + 1) = IC(1, i);
-    }
+    B << IC(1, 0),  0.0,        IC(1, 1),   0.0,        IC(1, 2),       0.0,
+         0.0,       IC(2, 0),   0.0,        IC(2, 1),   0.0,            IC(2, 2),
+         IC(2, 0),  IC(1, 0),   IC(2, 1),   IC(1, 1),   IC(2, 2),       IC(1, 2);
+
 }

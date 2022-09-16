@@ -87,6 +87,20 @@ TEST(GeometryCoarseMesh, CheckElementsCount)
     EXPECT_EQ(elements.size(), 38);
 }
 
+TEST(GeometryCoarseMesh, CheckSortedBoundaries)
+{
+    Geometry geometry;
+    geometry.loadFromFile("data/mesh_coarse.k");
+
+    auto boundary = geometry.getBoundaries()[2].nodes;
+
+    EXPECT_EQ(boundary[0].node + geometry.getShift(), 1);
+    EXPECT_EQ(boundary[1].node + geometry.getShift(), 10);
+    EXPECT_EQ(boundary[2].node + geometry.getShift(), 11);
+    EXPECT_EQ(boundary[3].node + geometry.getShift(), 12);
+    EXPECT_EQ(boundary[4].node + geometry.getShift(), 3);
+}
+
 TEST(GeometryHomoMesh, LoadMesh)
 {
     Geometry geometry;
@@ -104,3 +118,13 @@ TEST(GeometryHomoMesh, CheckBoundaries)
     EXPECT_EQ(boundaries[1].nodes.size(), 9);
     EXPECT_EQ(boundaries[2].nodes.size(), 13);
 }
+
+
+
+
+
+    //    1            0.15               0               0       0       0
+    //   10            0.15       0.0601873               0       0       0
+    //   11            0.15        0.123094               0       0       0
+    //   12            0.15        0.186547               0       0       0
+    //    3            0.15            0.25               0       0       0
